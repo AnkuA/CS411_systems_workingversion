@@ -208,6 +208,11 @@ public class Parser {
          lex.eatKeyword("int");
          schema.addIntField(fldname);
       }
+      //AA:
+      else if (lex.matchKeyword("float")) {
+          lex.eatKeyword("float");
+          schema.addFloatField(fldname);
+      }
       else {
          lex.eatKeyword("varchar");
          lex.eatDelim('(');
