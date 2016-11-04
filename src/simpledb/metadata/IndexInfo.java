@@ -1,6 +1,7 @@
 package simpledb.metadata;
 
 import static java.sql.Types.INTEGER;
+import static java.sql.Types.FLOAT;
 import static simpledb.file.Page.BLOCK_SIZE;
 import simpledb.server.SimpleDB;
 import simpledb.tx.Transaction;
@@ -105,8 +106,13 @@ public class IndexInfo {
       Schema sch = new Schema();
       sch.addIntField("block");
       sch.addIntField("id");
-      if (ti.schema().type(fldname) == INTEGER)
+      if (ti.schema().type(fldname) == INTEGER){
          sch.addIntField("dataval");
+      }
+      //AA: float added
+      else if (ti.schema().type(fldname) == FLOAT){
+          sch.addFloatField("dataval");
+      }
       else {
          int fldlen = ti.schema().length(fldname);
          sch.addStringField("dataval", fldlen);
