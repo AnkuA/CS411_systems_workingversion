@@ -66,7 +66,7 @@ public class Lexer {
     */
    public boolean matchId() {
       //return  tok.ttype==StreamTokenizer.TT_WORD && !keywords.contains(tok.sval);
-	   return  tok.ttype==StreamTokenizer.TT_WORD && !keywords.contains(tok.sval)||tok.sval.equals('*');
+	   return  tok.ttype==StreamTokenizer.TT_WORD && !keywords.contains(tok.sval)|| (tok.sval != null && tok.sval.equals('*'));
    }
    
 //Methods to "eat" the current token

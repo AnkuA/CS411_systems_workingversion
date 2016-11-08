@@ -1,8 +1,4 @@
-/.DS_Store
-/.classpath
-/.project
-/.settings/
-/README.txt
 /javadoc/
 /simpledb/
 /studentClient/
+/testrun.bat
