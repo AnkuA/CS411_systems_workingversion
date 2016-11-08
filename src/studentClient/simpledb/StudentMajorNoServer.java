@@ -23,7 +23,7 @@ public class StudentMajorNoServer {
 			Transaction tx = new Transaction();
 			
 			// analogous to the statement
-			String qry = "select SName, DName "
+			String qry = "select * "
 		        + "from DEPT, STUDENT "
 		        + "where MajorId = DId";	
 			Plan p = SimpleDB.planner().createQueryPlan(qry, tx);

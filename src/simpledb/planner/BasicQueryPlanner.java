@@ -2,6 +2,8 @@ package simpledb.planner;
 
 import simpledb.tx.Transaction;
 import simpledb.query.*;
+import simpledb.record.Schema;
+import simpledb.record.TableInfo;
 import simpledb.parse.*;
 import simpledb.server.SimpleDB;
 import java.util.*;
@@ -37,7 +39,29 @@ public class BasicQueryPlanner implements QueryPlanner {
       p = new SelectPlan(p, data.pred());
       
       //Step 4: Project on the field names
-      p = new ProjectPlan(p, data.fields());
-      return p;
+      //p = new ProjectPlan(p, data.fields());
+      //return p;
+      //Step 4: Project on the field names
+      // Collection <String> temp;
+       
+       Iterator<String> it = data.fields().iterator();
+       if( data.fields().size() == 1){
+     	  String hold = it.next();
+     	  if(hold.equals("*")){
+     		 it.remove();
+     		 for(String tblname : data.tables()){
+     			 //System.out.println(tblname);
+     			 TableInfo curr =SimpleDB.mdMgr().getTableInfo(tblname, tx);
+     			 Schema curSchema = curr.schema();
+     			 //for(String names: curSchema.fields()){
+     			//	 System.out.println(names);
+     			 //}
+     			 data.fields().addAll(curSchema.fields());
+     		 }
+     	  }  	  
+       }
+       p = new ProjectPlan(p, data.fields());
+       
+       return p;
    }
 }

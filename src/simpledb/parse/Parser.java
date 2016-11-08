@@ -67,13 +67,27 @@ public class Parser {
    }
    
    private Collection<String> selectList() {
+     /* Collection<String> L = new ArrayList<String>();
+      L.add(field());
+      if (lex.matchDelim(',')) {
+         lex.eatDelim(',');
+         L.addAll(selectList());
+      }
+      return L;*/
       Collection<String> L = new ArrayList<String>();
+	  if(lex.matchDelim('*')){
+		  //return all field
+		  lex.eatDelim('*');
+		  L.add("*");
+		  return L;
+	  }else{
       L.add(field());
       if (lex.matchDelim(',')) {
          lex.eatDelim(',');
          L.addAll(selectList());
       }
       return L;
+	  }
    }
    
    private Collection<String> tableList() {
