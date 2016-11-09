@@ -66,7 +66,9 @@ public class Lexer {
     */
    public boolean matchId() {
       //return  tok.ttype==StreamTokenizer.TT_WORD && !keywords.contains(tok.sval);
-	   return  tok.ttype==StreamTokenizer.TT_WORD && !keywords.contains(tok.sval)|| (tok.sval != null && tok.sval.equals('*'));
+	   if(tok.sval !=null && tok.sval.equals('*'))
+		   return true;
+	   return  tok.ttype==StreamTokenizer.TT_WORD && !keywords.contains(tok.sval);
    }
    
 //Methods to "eat" the current token
@@ -157,7 +159,7 @@ public class Lexer {
    }
    
    private void initKeywords() {
-      keywords = Arrays.asList("select", "from", "where", "and",
+      keywords = Arrays.asList("select", "from", "where", "and","or",
                                "insert", "into", "values", "delete", "update", "set", 
                                "create", "table", "int", "varchar", "view", "as", "index", "on");
    }

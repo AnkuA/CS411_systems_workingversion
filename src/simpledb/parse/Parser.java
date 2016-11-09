@@ -43,10 +43,21 @@ public class Parser {
    }
    
    public Predicate predicate() {
+//      Predicate pred = new Predicate(term());
+//      if (lex.matchKeyword("and")) {
+//         lex.eatKeyword("and");
+//         pred.conjoinWith(predicate());
+//      }
+//      return pred;
       Predicate pred = new Predicate(term());
       if (lex.matchKeyword("and")) {
          lex.eatKeyword("and");
+         pred.setIsconj(true);
          pred.conjoinWith(predicate());
+      }else if(lex.matchKeyword("or")){
+    	  lex.eatKeyword("or");
+    	  pred.setIsconj(false);
+    	  pred.conjoinWith(predicate());
       }
       return pred;
    }
