@@ -48,6 +48,18 @@ public class RecordPage {
    public boolean next() {
       return searchFor(INUSE);
    }
+
+   /**
+    * AA: Added this
+    * Returns the float value stored for the
+    * specified field of the current record.
+    * @param fldname the name of the field.
+    * @return the float stored in that field
+    */
+   public float getFloat(String fldname) {
+      int position = fieldpos(fldname);
+      return tx.getFloat(blk, position);
+   }
    
    /**
     * Returns the integer value stored for the
@@ -69,6 +81,18 @@ public class RecordPage {
    public String getString(String fldname) {
       int position = fieldpos(fldname);
       return tx.getString(blk, position);
+   }
+
+   /**
+    * AA: Added this
+    * Stores an float at the specified field
+    * of the current record.
+    * @param fldname the name of the field
+    * @param val the float value stored in that field
+    */
+   public void setFloat(String fldname, float val) {
+      int position = fieldpos(fldname);
+      tx.setFloat(blk, position, val);
    }
    
    /**

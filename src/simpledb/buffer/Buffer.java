@@ -35,6 +35,19 @@ public class Buffer {
     * is called first.
     */
    public Buffer() {}
+
+   /**
+    * AA: Added this
+    * Returns the float value at the specified offset of the
+    * buffer's page.
+    * If an float was not stored at that location,
+    * the behavior of the method is unpredictable.
+    * @param offset the byte offset of the page
+    * @return the integer value at that offset
+    */
+   public float getFloat(int offset) {
+      return contents.getFloat(offset);
+   }
    
    /**
     * Returns the integer value at the specified offset of the
@@ -58,6 +71,28 @@ public class Buffer {
     */
    public String getString(int offset) {
       return contents.getString(offset);
+   }
+
+   /**
+    * AA: Added this
+    * Writes a float to the specified offset of the
+    * buffer's page.
+    * This method assumes that the transaction has already
+    * written an appropriate log record.
+    * The buffer saves the id of the transaction
+    * and the LSN of the log record.
+    * A negative lsn value indicates that a log record
+    * was not necessary.
+    * @param offset the byte offset within the page
+    * @param val the new float value to be written
+    * @param txnum the id of the transaction performing the modification
+    * @param lsn the LSN of the corresponding log record
+    */
+   public void setFloat(int offset, float val, int txnum, int lsn) {
+      modifiedBy = txnum;
+      if (lsn >= 0)
+	      logSequenceNumber = lsn;
+      contents.setFloat(offset, val);
    }
 
    /**

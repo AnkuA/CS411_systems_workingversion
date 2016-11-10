@@ -62,6 +62,17 @@ public class RecordFile {
    }
    
    /**
+    * AA: Added this
+    * Returns the value of the specified field
+    * in the current record.
+    * @param fldname the name of the field
+    * @return the integer value at that field
+    */
+   public float getFloat(String fldname) {
+      return rp.getFloat(fldname);
+   }
+   
+   /**
     * Returns the value of the specified field
     * in the current record.
     * @param fldname the name of the field
@@ -79,6 +90,17 @@ public class RecordFile {
     */
    public String getString(String fldname) {
       return rp.getString(fldname);
+   }
+   
+   /**
+    * AA: Added this
+    * Sets the value of the specified field 
+    * in the current record.
+    * @param fldname the name of the field
+    * @param val the new value for the field
+    */
+   public void setFloat(String fldname, float val) {
+      rp.setFloat(fldname, val);
    }
    
    /**

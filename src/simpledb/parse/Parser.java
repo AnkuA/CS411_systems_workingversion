@@ -22,10 +22,17 @@ public class Parser {
    }
    
    public Constant constant() {
-      if (lex.matchStringConstant())
+      if (lex.matchStringConstant()){
          return new StringConstant(lex.eatStringConstant());
-      else
-         return new IntConstant(lex.eatIntConstant());
+      }
+      //AA: Check Int constant status
+      else if (lex.matchIntConstant()){
+          return new IntConstant(lex.eatIntConstant());
+       }
+      //AA: Added this
+      else {
+          return new FloatConstant(lex.eatFloatConstant());
+      }
    }
    
    public Expression expression() {

@@ -45,6 +45,14 @@ public class Page {
    public static final int BLOCK_SIZE = 400;
    
    /**
+    * AA: Added this
+    * The size of a float in bytes.
+    * This value is almost certainly 4, but it is
+    * a good idea to encode this value as a constant. 
+    */
+   public static final int FLOAT_SIZE = Float.SIZE / Byte.SIZE;
+   
+   /**
     * The size of an integer in bytes.
     * This value is almost certainly 4, but it is
     * a good idea to encode this value as a constant. 
@@ -107,6 +115,19 @@ public class Page {
    public synchronized Block append(String filename) {
       return filemgr.append(filename, contents);
    }
+
+   /**
+    * AA: Added this
+    * Returns the float value at a specified offset of the page.
+    * If a float was not stored at that location, 
+    * the behavior of the method is unpredictable.
+    * @param offset the byte offset within the page
+    * @return the float value at that offset
+    */
+   public synchronized float getFloat(int offset) {
+      contents.position(offset);
+      return contents.getFloat();
+   }
    
    /**
     * Returns the integer value at a specified offset of the page.
@@ -118,6 +139,17 @@ public class Page {
    public synchronized int getInt(int offset) {
       contents.position(offset);
       return contents.getInt();
+   }
+
+   /**
+    * AA: Added this
+    * Writes a float to the specified offset on the page.
+    * @param offset the byte offset within the page
+    * @param val the float to be written to the page
+    */
+   public synchronized void setFloat(int offset, float val) {
+      contents.position(offset);
+      contents.putFloat(val);
    }
    
    /**

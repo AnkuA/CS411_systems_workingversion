@@ -1,6 +1,7 @@
 package simpledb.query;
 
 import static java.sql.Types.INTEGER;
+import static java.sql.Types.FLOAT;
 import simpledb.tx.Transaction;
 import simpledb.record.*;
 
@@ -51,9 +52,17 @@ public class TableScan implements UpdateScan {
    public Constant getVal(String fldname) {
       if (sch.type(fldname) == INTEGER)
          return new IntConstant(rf.getInt(fldname));
+      // AA: Added this
+      else if (sch.type(fldname) == FLOAT)
+          return new FloatConstant(rf.getFloat(fldname));
       else
          return new StringConstant(rf.getString(fldname));
    }
+   
+   // AA: Added this
+   public float getFloat(String fldname) {
+	      return rf.getFloat(fldname);
+	   }
    
    public int getInt(String fldname) {
       return rf.getInt(fldname);
@@ -77,10 +86,25 @@ public class TableScan implements UpdateScan {
     * @see simpledb.query.UpdateScan#setVal(java.lang.String, simpledb.query.Constant)
     */ 
    public void setVal(String fldname, Constant val) {
-      if (sch.type(fldname) == INTEGER)
-         rf.setInt(fldname, (Integer)val.asJavaVal());
-      else
+	   
+      if (sch.type(fldname) == INTEGER) {
+    	  System.out.format("setting field %s to int %s\n", fldname, val.toString());
+    	  rf.setInt(fldname, (Integer)val.asJavaVal());
+      }
+      // AA: Added this
+      else if (sch.type(fldname) == FLOAT) {
+    	  System.out.format("setting field %s to float %s\n", fldname, val.toString());
+    	  rf.setFloat(fldname, (Float)val.asJavaVal());
+      }
+      else {
+    	  System.out.format("setting field %s to str %s\n", fldname, val.toString());
          rf.setString(fldname, (String)val.asJavaVal());
+      }
+   }
+   
+   // AA: Added this
+   public void setFloat(String fldname, float val) {
+      rf.setFloat(fldname, val);
    }
    
    public void setInt(String fldname, int val) {

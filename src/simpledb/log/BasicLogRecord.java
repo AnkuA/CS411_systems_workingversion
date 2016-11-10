@@ -29,6 +29,18 @@ public class BasicLogRecord {
       this.pg = pg;
       this.pos = pos;
    }
+
+   /**
+    * AA: Added this
+    * Returns the next value of the current log record, 
+    * assuming it is a float.
+    * @return the next value of the current log record
+    */
+   public float nextFloat() {
+      float result = pg.getFloat(pos);
+      pos += INT_SIZE;
+      return result;
+   }
    
    /**
     * Returns the next value of the current log record, 
