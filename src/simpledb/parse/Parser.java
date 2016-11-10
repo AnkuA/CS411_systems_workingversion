@@ -50,10 +50,21 @@ public class Parser {
    }
    
    public Predicate predicate() {
+//      Predicate pred = new Predicate(term());
+//      if (lex.matchKeyword("and")) {
+//         lex.eatKeyword("and");
+//         pred.conjoinWith(predicate());
+//      }
+//      return pred;
       Predicate pred = new Predicate(term());
       if (lex.matchKeyword("and")) {
          lex.eatKeyword("and");
+         pred.setIsconj(true);
          pred.conjoinWith(predicate());
+      }else if(lex.matchKeyword("or")){
+    	  lex.eatKeyword("or");
+    	  pred.setIsconj(false);
+    	  pred.conjoinWith(predicate());
       }
       return pred;
    }
@@ -74,13 +85,27 @@ public class Parser {
    }
    
    private Collection<String> selectList() {
+     /* Collection<String> L = new ArrayList<String>();
+      L.add(field());
+      if (lex.matchDelim(',')) {
+         lex.eatDelim(',');
+         L.addAll(selectList());
+      }
+      return L;*/
       Collection<String> L = new ArrayList<String>();
+	  if(lex.matchDelim('*')){
+		  //return all field
+		  lex.eatDelim('*');
+		  L.add("*");
+		  return L;
+	  }else{
       L.add(field());
       if (lex.matchDelim(',')) {
          lex.eatDelim(',');
          L.addAll(selectList());
       }
       return L;
+	  }
    }
    
    private Collection<String> tableList() {

@@ -13,7 +13,7 @@ public class StudentMajor {
 
 			// Step 2: execute the query
 			Statement stmt = conn.createStatement();
-			String qry = "select SName, DName "
+			String qry = "select * "
 			           + "from DEPT, STUDENT "
 			           + "where MajorId = DId";
 			ResultSet rs = stmt.executeQuery(qry);

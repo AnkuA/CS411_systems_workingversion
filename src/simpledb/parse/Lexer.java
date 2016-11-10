@@ -128,7 +128,10 @@ public class Lexer {
     * @return true if the current token is an identifier
     */
    public boolean matchId() {
-      return  tok.ttype==StreamTokenizer.TT_WORD && !keywords.contains(tok.sval);
+      //return  tok.ttype==StreamTokenizer.TT_WORD && !keywords.contains(tok.sval);
+	   if(tok.sval !=null && tok.sval.equals('*'))
+		   return true;
+	   return  tok.ttype==StreamTokenizer.TT_WORD && !keywords.contains(tok.sval);
    }
    
 //Methods to "eat" the current token
@@ -208,9 +211,18 @@ public class Lexer {
     * @return the string value of the current token
     */
    public String eatId() {
-      if (!matchId())
-         throw new BadSyntaxException();
-      String s = tok.sval;
+//      if (!matchId())
+//         throw new BadSyntaxException();
+//      String s = tok.sval;
+//      nextToken();
+//      return s;
+      String s;
+      if(tok.sval.equals('*')){
+    	  System.out.println("Yes");
+    	  s = "*";
+      }else{
+    	  s = tok.sval;
+      }
       nextToken();
       return s;
    }
@@ -225,7 +237,7 @@ public class Lexer {
    }
    
    private void initKeywords() {
-      keywords = Arrays.asList("select", "from", "where", "and",
+      keywords = Arrays.asList("select", "from", "where", "and","or",
                                "insert", "into", "values", "delete", "update", "set", 
                                "create", "table", "int", "varchar", "view", "as", "index", "on");
    }

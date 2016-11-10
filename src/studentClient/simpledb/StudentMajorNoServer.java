@@ -23,9 +23,9 @@ public class StudentMajorNoServer {
 			Transaction tx = new Transaction();
 			
 			// analogous to the statement
-			String qry = "select SName, DName "
-		        + "from DEPT, STUDENT "
-		        + "where MajorId = DId";	
+			String qry = "select * from STUDENT where majorid = 10 or majorid = 20";
+//		        + "from DEPT, STUDENT "
+//		        + "where MajorId = DId";	
 			Plan p = SimpleDB.planner().createQueryPlan(qry, tx);
 			
 			// analogous to the result set
@@ -34,7 +34,7 @@ public class StudentMajorNoServer {
 			System.out.println("Name\tMajor");
 			while (s.next()) {
 				String sname = s.getString("sname"); //SimpleDB stores field names
-				String dname = s.getString("dname"); //in lower case
+				int dname = s.getInt("majorid"); //in lower case
 				System.out.println(sname + "\t" + dname);
 			}
 			s.close();
