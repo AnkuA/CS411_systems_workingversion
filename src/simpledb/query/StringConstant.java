@@ -40,4 +40,13 @@ public class StringConstant implements Constant {
    public String toString() {
       return val;
    }
+   
+   public Object addition(Object obj) {
+	   return null;
+   }
+
+	public Object division(Object obj) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

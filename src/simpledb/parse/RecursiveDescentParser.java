@@ -156,7 +156,8 @@ public class RecursiveDescentParser {
 			System.out.println("offset clause (should be unmatchable)");
 			childIndex++;
 		}
-		return new QueryData(fields, tables, pred);
+		// TODO Group By + Aggregate
+		return new QueryData(fields, tables, pred, null, null);
 	}
 
 	public static Collection<String> parseSelectExpressions(SQLBasicParser.SelectexpressionsContext root) {

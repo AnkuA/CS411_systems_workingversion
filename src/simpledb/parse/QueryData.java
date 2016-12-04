@@ -1,6 +1,8 @@
 package simpledb.parse;
 
 import simpledb.query.*;
+import simpledb.record.TableInfo;
+
 import java.util.*;
 
 /**
@@ -11,14 +13,18 @@ public class QueryData {
    private Collection<String> fields;
    private Collection<String> tables;
    private Predicate pred;
+   private Collection<String> groupby;
+   private HashMap<String, Aggregate> aggr;
    
    /**
     * Saves the field and table list and predicate.
     */
-   public QueryData(Collection<String> fields, Collection<String> tables, Predicate pred) {
+   public QueryData(Collection<String> fields, Collection<String> tables, Predicate pred, Collection<String> group, HashMap<String, Aggregate> aggr) {
       this.fields = fields;
       this.tables = tables;
       this.pred = pred;
+      this.groupby = group;
+      this.aggr = aggr;
    }
    
    /**
@@ -44,6 +50,14 @@ public class QueryData {
     */
    public Predicate pred() {
       return pred;
+   }
+   
+   public Collection<String> groupby() {
+	   return groupby;
+   }
+   
+   public HashMap<String, Aggregate> aggregate() {
+	   return aggr;
    }
    
    public String toString() {

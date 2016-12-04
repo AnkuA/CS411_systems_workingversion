@@ -2,6 +2,7 @@ package simpledb.query;
 
 import simpledb.record.Schema;
 import java.util.Collection;
+import java.util.HashMap;
 
 /** The Plan class corresponding to the <i>project</i>
   * relational algebra operator.
@@ -10,6 +11,7 @@ import java.util.Collection;
 public class ProjectPlan implements Plan {
    private Plan p;
    private Schema schema = new Schema();
+   private HashMap<String, Aggregate> aggr;
    
    /**
     * Creates a new project node in the query tree,
@@ -17,10 +19,11 @@ public class ProjectPlan implements Plan {
     * @param p the subquery
     * @param fieldlist the list of fields
     */
-   public ProjectPlan(Plan p, Collection<String> fieldlist) {
+   public ProjectPlan(Plan p, Collection<String> fieldlist, HashMap<String, Aggregate> aggr) {
       this.p = p;
       for (String fldname : fieldlist)
          schema.add(fldname, p.schema());
+      this.aggr = aggr;
    }
    
    /**
@@ -29,7 +32,7 @@ public class ProjectPlan implements Plan {
     */
    public Scan open() {
       Scan s = p.open();
-      return new ProjectScan(s, schema.fields());
+      return new ProjectScan(s, schema.fields(), aggr);
    }
    
    /**

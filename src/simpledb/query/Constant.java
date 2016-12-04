@@ -11,4 +11,8 @@ public interface Constant extends Comparable<Constant> {
     * @return the Java value of the constant
     */
    public Object  asJavaVal();
+   
+   public Object addition(Object obj);
+   
+   public Object division(Object obj);
 }

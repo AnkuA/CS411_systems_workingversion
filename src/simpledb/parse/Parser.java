@@ -73,7 +73,8 @@ public class Parser {
    
    public QueryData query() {
       lex.eatKeyword("select");
-      Collection<String> fields = selectList();
+      HashMap<String, Aggregate> aggr = new HashMap<String, Aggregate>();
+      Collection<String> fields = selectList(aggr);
       lex.eatKeyword("from");
       Collection<String> tables = tableList();
       Predicate pred = new Predicate();
@@ -81,10 +82,24 @@ public class Parser {
          lex.eatKeyword("where");
          pred = predicate();
       }
-      return new QueryData(fields, tables, pred);
+      Collection<String> groupby = null;
+      if(lex.matchKeyword("group")) {
+          lex.eatKeyword("group");
+          lex.eatKeyword("by");
+          groupby = groupbyList();
+          // Check for valid fields
+//          for(String field : fields)
+//        	  if(!groupby.contains(field))
+//        		  throw new BadSyntaxException();
+      }
+      
+      if(aggr.size() == 0)
+    	  aggr = null;
+      return new QueryData(fields, tables, pred, groupby, aggr);
    }
-   
-   private Collection<String> selectList() {
+  
+
+private Collection<String> selectList(HashMap<String, Aggregate> aggr) {
      /* Collection<String> L = new ArrayList<String>();
       L.add(field());
       if (lex.matchDelim(',')) {
@@ -98,11 +113,53 @@ public class Parser {
 		  lex.eatDelim('*');
 		  L.add("*");
 		  return L;
-	  }else{
-      L.add(field());
+	  }
+	  else {
+	  if(lex.matchKeyword("max")) {
+		  lex.eatKeyword("max");
+		  lex.eatDelim('(');
+		  String field = field();
+		  L.add(field);
+		  aggr.put("max(" + field + ")", new Max(field));
+		  lex.eatDelim(')');
+	  }
+	  else if(lex.matchKeyword("min")) {
+		  lex.eatKeyword("min");
+		  lex.eatDelim('(');
+		  String field = field();
+		  L.add(field);
+		  aggr.put("min(" + field + ")", new Min(field));
+		  lex.eatDelim(')');
+	  }
+	  else if(lex.matchKeyword("avg")) {
+		  lex.eatKeyword("avg");
+		  lex.eatDelim('(');
+		  String field = field();
+		  L.add(field);
+		  aggr.put("avg(" + field + ")", new Average(field));
+		  lex.eatDelim(')');
+	  }
+	  else if(lex.matchKeyword("sum")) {
+		  lex.eatKeyword("sum");
+		  lex.eatDelim('(');
+		  String field = field();
+		  L.add(field);
+		  aggr.put("sum(" + field + ")", new Sum(field));
+		  lex.eatDelim(')');
+	  }
+	  else if(lex.matchKeyword("count")) {
+		  lex.eatKeyword("count");
+		  lex.eatDelim('(');
+		  String field = field();
+		  L.add(field);
+		  aggr.put("count(" + field + ")", new Count(field));
+		  lex.eatDelim(')');
+	  }
+	  else
+		  L.add(field());
       if (lex.matchDelim(',')) {
          lex.eatDelim(',');
-         L.addAll(selectList());
+         L.addAll(selectList(aggr));
       }
       return L;
 	  }
@@ -118,6 +175,15 @@ public class Parser {
       return L;
    }
    
+   private Collection<String> groupbyList() {
+	  Collection<String> L = new ArrayList<String>();
+	  L.add(field());
+      if (lex.matchDelim(',')) {
+         lex.eatDelim(',');
+         L.addAll(groupbyList());
+      }
+	  return L;
+   }
 // Methods for parsing the various update commands
    
    public Object updateCmd() {
