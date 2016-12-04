@@ -160,6 +160,18 @@ public class SQLBasicBaseListener implements SQLBasicListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterSubqueryfromexpression(SQLBasicParser.SubqueryfromexpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSubqueryfromexpression(SQLBasicParser.SubqueryfromexpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterName(SQLBasicParser.NameContext ctx) { }
 	/**
 	 * {@inheritDoc}

@@ -77,6 +77,11 @@ fromexpressions
 
 fromexpression
  : name as_alias_expression?
+ | subqueryfromexpression
+ ;
+
+subqueryfromexpression
+ : '(' select ')' as_alias_expression
  ;
 
 name

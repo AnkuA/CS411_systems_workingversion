@@ -178,8 +178,18 @@ public class RecursiveDescentParser {
 
 	public static Collection<String> parseFromExpressions(SQLBasicParser.FromexpressionsContext root) {
 		Collection<String> tables = new ArrayList<String>();
+		ParseTree node = root.getChild(0);
 
-		tables.add(root.getChild(0).getText());
+		if(node.getChild(0) instanceof SQLBasicParser.SubqueryfromexpressionContext) {
+			System.out.println("Subquery used as table, but not supported.");
+
+			//TODO
+		} else {
+			if(node.getChildCount() > 1) {
+				System.out.println("As Alias expression used, but not supported: " + node.getChild(1).getText());
+			}
+			tables.add(node.getChild(0).getChild(0).getText());
+		}
 
 		if(root.getChildCount() > 2) {
 			tables.addAll(parseFromExpressions((SQLBasicParser.FromexpressionsContext) root.getChild(2)));
@@ -200,8 +210,9 @@ public class RecursiveDescentParser {
 
 		if(exp.getChildCount() > 2) {
 			simpledb.query.Predicate pred2 = parseExpression((SQLBasicParser.ExpressionContext) exp.getChild(2));
-			pred.setIsconj(false);
-			pred.conjoinWith(pred2);
+			//pred.setIsconj(false);
+			//pred.conjoinWith(pred2);
+			pred = new JoinedPredicate(pred, pred2, false);
 		}
 		return pred;
 	}
@@ -212,8 +223,9 @@ public class RecursiveDescentParser {
 
 		if(exp.getChildCount() > 2) {
 			simpledb.query.Predicate pred2 = parseAndCondition((SQLBasicParser.AndconditionContext) exp.getChild(2));
-			pred.setIsconj(true);
-			pred.conjoinWith(pred2);
+			//pred.setIsconj(true);
+			//pred.conjoinWith(pred2);
+			pred = new JoinedPredicate(pred, pred2, true);
 		}
 		return pred;
 	}

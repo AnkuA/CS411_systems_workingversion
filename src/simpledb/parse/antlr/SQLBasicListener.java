@@ -128,6 +128,16 @@ public interface SQLBasicListener extends ParseTreeListener {
 	 */
 	void exitFromexpression(SQLBasicParser.FromexpressionContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link SQLBasicParser#subqueryfromexpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterSubqueryfromexpression(SQLBasicParser.SubqueryfromexpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SQLBasicParser#subqueryfromexpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitSubqueryfromexpression(SQLBasicParser.SubqueryfromexpressionContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link SQLBasicParser#name}.
 	 * @param ctx the parse tree
 	 */
