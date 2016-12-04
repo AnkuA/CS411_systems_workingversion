@@ -111,6 +111,7 @@ public class RecursiveDescentParser {
 
 		System.out.println("Select expressions: " + selectCtx.getChild(childIndex).getText());
 		HashMap<String, Aggregate> collector = new HashMap<String, Aggregate>();
+		Collection<String> groups = null;
 		Collection<String> fields = parseSelectExpressions((SQLBasicParser.SelectexpressionsContext) selectCtx.getChild(childIndex), collector);
 		childIndex += 2;
 		System.out.println("From expressions: " + selectCtx.getChild(childIndex).getText());
@@ -162,7 +163,7 @@ public class RecursiveDescentParser {
 		//check to make sure the aggregations make sense
 		if(collector.size() > 0) {
 			if(!groups.containsAll(fields)) {
-				throw new RuntimeException("Invalid field due to aggregation: " + item);
+				throw new RuntimeException("Invalid fields due to aggregation");
 			}
 		}
 		return new QueryData(fields, tables, pred, groups, collector);
@@ -183,7 +184,7 @@ public class RecursiveDescentParser {
 			} else if(aggregation.equals("min")) {
 				collector.put("min(" + field + ")", new Min(field));
 			} else if(aggregation.equals("avg")) {
-				collector.put("avg(" + field + ")", new Avg(field));
+				collector.put("avg(" + field + ")", new Average(field));
 			} else if(aggregation.equals("sum")) {
 				collector.put("sum(" + field + ")", new Sum(field));
 			} else {
@@ -310,7 +311,7 @@ public class RecursiveDescentParser {
 		return ctx.getText();
 	}
 
-	public static Collection<String> parseGroupByExpression(SQLBasicParser.Optional_group_byContext root) {
+	public static Collection<String> parseGroupByExpression(SQLBasicParser.Optional_group_by_expressionContext root) {
 		SQLBasicParser.GrouplistContext node = (SQLBasicParser.GrouplistContext) root.getChild(2);
 		Collection<String> groups = parseGroups(node);
 		return groups;
@@ -324,6 +325,7 @@ public class RecursiveDescentParser {
 		if(node.getChildCount() > 2) {
 			groups.addAll(parseGroups((SQLBasicParser.GrouplistContext) node.getChild(2)));
 		}
+		return groups;
 	}
 
 	public static void printParseTree(ParseTree node, int depth) {
