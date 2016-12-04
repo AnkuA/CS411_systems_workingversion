@@ -38,6 +38,7 @@ public class SimpleDB {
     */
    public static void init(String dirname) {
       initFileLogAndBufferMgr(dirname);
+      System.out.println("DIRNAME: " + dirname);
       Transaction tx = new Transaction();
       boolean isnew = fm.isNew();
       if (isnew)

@@ -110,7 +110,8 @@ public class RecursiveDescentParser {
 		}
 
 		System.out.println("Select expressions: " + selectCtx.getChild(childIndex).getText());
-		Collection<String> fields = parseSelectExpressions((SQLBasicParser.SelectexpressionsContext) selectCtx.getChild(childIndex));
+		HashMap<String, Aggregate> collector = new HashMap<String, Aggregate>();
+		Collection<String> fields = parseSelectExpressions((SQLBasicParser.SelectexpressionsContext) selectCtx.getChild(childIndex), collector);
 		childIndex += 2;
 		System.out.println("From expressions: " + selectCtx.getChild(childIndex).getText());
 		Collection<String> tables = parseFromExpressions((SQLBasicParser.FromexpressionsContext) selectCtx.getChild(childIndex));
@@ -129,7 +130,8 @@ public class RecursiveDescentParser {
 
 		if(selectCtx.getChildCount() > childIndex && selectCtx.getChild(childIndex) instanceof SQLBasicParser.Optional_group_by_expressionContext) {
 			//use a helper function for this
-			System.out.println("group by clause specified, but not supported");
+			//System.out.println("group by clause specified, but not supported");
+			groups = parseGroupByExpression((SQLBasicParser.Optional_group_by_expressionContext) selectCtx.getChild(childIndex));
 			childIndex++;
 		}
 
@@ -156,31 +158,61 @@ public class RecursiveDescentParser {
 			System.out.println("offset clause (should be unmatchable)");
 			childIndex++;
 		}
-		// TODO Group By + Aggregate
-		return new QueryData(fields, tables, pred, null, null);
+
+		//check to make sure the aggregations make sense
+		if(collector.size() > 0) {
+			if(!groups.containsAll(fields)) {
+				throw new RuntimeException("Invalid field due to aggregation: " + item);
+			}
+		}
+		return new QueryData(fields, tables, pred, groups, collector);
 	}
 
-	public static Collection<String> parseSelectExpressions(SQLBasicParser.SelectexpressionsContext root) {
+	public static Collection<String> parseSelectExpressions(SQLBasicParser.SelectexpressionsContext root, HashMap<String, Aggregate> collector) {
 		Collection<String> fields = new ArrayList<String>();
 		ParseTree node = root.getChild(0).getChild(0);
 
 		if(node instanceof SQLBasicParser.AggregateselectexpressionContext) {
-			System.out.println("Aggregation specified, but not supported.");
-			fields.add(parseSimpleSelectExpression((SQLBasicParser.SimpleselectexpressionContext) node.getChild(2)));
+			//System.out.println("Aggregation specified, but not supported.");
+			//fields.add(parseSimpleSelectExpression((SQLBasicParser.SimpleselectexpressionContext) node.getChild(2)));
+			String aggregation = node.getChild(0).getText();
+			String field = node.getChild(2).getText();
+
+			if(aggregation.equals("max")) {
+				collector.put("max(" + field + ")", new Max(field));
+			} else if(aggregation.equals("min")) {
+				collector.put("min(" + field + ")", new Min(field));
+			} else if(aggregation.equals("avg")) {
+				collector.put("avg(" + field + ")", new Avg(field));
+			} else if(aggregation.equals("sum")) {
+				collector.put("sum(" + field + ")", new Sum(field));
+			} else {
+				collector.put("count(" + field + ")", new Count(field));
+			}
 		} else {
 			fields.add(parseSimpleSelectExpression((SQLBasicParser.SimpleselectexpressionContext) node));
 		}
 
 		if(root.getChildCount() > 2) {
-			fields.addAll(parseSelectExpressions((SQLBasicParser.SelectexpressionsContext) root.getChild(2)));
+			fields.addAll(parseSelectExpressions((SQLBasicParser.SelectexpressionsContext) root.getChild(2), collector));
 		}
 		return fields;
 	}
 
 	public static Collection<String> parseFromExpressions(SQLBasicParser.FromexpressionsContext root) {
 		Collection<String> tables = new ArrayList<String>();
+		ParseTree node = root.getChild(0);
 
-		tables.add(root.getChild(0).getText());
+		if(node.getChild(0) instanceof SQLBasicParser.SubqueryfromexpressionContext) {
+			System.out.println("Subquery used as table, but not supported.");
+
+			//TODO
+		} else {
+			if(node.getChildCount() > 1) {
+				System.out.println("As Alias expression used, but not supported: " + node.getChild(1).getText());
+			}
+			tables.add(node.getChild(0).getChild(0).getText());
+		}
 
 		if(root.getChildCount() > 2) {
 			tables.addAll(parseFromExpressions((SQLBasicParser.FromexpressionsContext) root.getChild(2)));
@@ -201,8 +233,9 @@ public class RecursiveDescentParser {
 
 		if(exp.getChildCount() > 2) {
 			simpledb.query.Predicate pred2 = parseExpression((SQLBasicParser.ExpressionContext) exp.getChild(2));
-			pred.setIsconj(false);
-			pred.conjoinWith(pred2);
+			//pred.setIsconj(false);
+			//pred.conjoinWith(pred2);
+			pred = new JoinedPredicate(pred, pred2, false);
 		}
 		return pred;
 	}
@@ -213,8 +246,9 @@ public class RecursiveDescentParser {
 
 		if(exp.getChildCount() > 2) {
 			simpledb.query.Predicate pred2 = parseAndCondition((SQLBasicParser.AndconditionContext) exp.getChild(2));
-			pred.setIsconj(true);
-			pred.conjoinWith(pred2);
+			//pred.setIsconj(true);
+			//pred.conjoinWith(pred2);
+			pred = new JoinedPredicate(pred, pred2, true);
 		}
 		return pred;
 	}
@@ -238,11 +272,13 @@ public class RecursiveDescentParser {
 			Expression e2 = parseOperand(o2);
 
 			TerminalNode comparator = (TerminalNode) exp.getChild(1);
+			String compText = comparator.getText();
+			Term.Comptype ct = Term.stringToComparator(compText);
 
-			if(!comparator.getText().equals("=")) {
+			if(ct == Term.Comptype.INVALID) {
 				System.out.println("Unsupported comparator used: " + comparator.getText());
 			}
-			return new simpledb.query.Predicate(new Term(e1, e2));
+			return new simpledb.query.Predicate(new Term(e1, compText, e2));
 		}
 	}
 
@@ -272,6 +308,22 @@ public class RecursiveDescentParser {
 			return ctx.getChild(0).getText();
 		}
 		return ctx.getText();
+	}
+
+	public static Collection<String> parseGroupByExpression(SQLBasicParser.Optional_group_byContext root) {
+		SQLBasicParser.GrouplistContext node = (SQLBasicParser.GrouplistContext) root.getChild(2);
+		Collection<String> groups = parseGroups(node);
+		return groups;
+	}
+
+	public static Collection<String> parseGroups(SQLBasicParser.GrouplistContext node) {
+		Collection<String> groups = new ArrayList<String>();
+
+		groups.add(node.getChild(0).getText());
+
+		if(node.getChildCount() > 2) {
+			groups.addAll(parseGroups((SQLBasicParser.GrouplistContext) node.getChild(2)));
+		}
 	}
 
 	public static void printParseTree(ParseTree node, int depth) {
