@@ -24,9 +24,9 @@ public class Planner {
     * @return the scan corresponding to the query plan
     */
    public Plan createQueryPlan(String qry, Transaction tx) {
-      Parser parser = new Parser(qry);
-      QueryData data = parser.query();
-//      QueryData data = RecursiveDescentParser.query(qry);
+      //Parser parser = new Parser(qry);
+      //QueryData data = parser.query();
+      QueryData data = RecursiveDescentParser.query(qry);
       return qplanner.createPlan(data, tx);
    }
    

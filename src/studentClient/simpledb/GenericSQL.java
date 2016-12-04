@@ -62,6 +62,7 @@ public class GenericSQL {
 								item = rs.getString(fields.get(i));
 							}
 							System.out.print(item);
+							//System.out.print(rs.getVal(fields.get(i)).asJavaVal());
 
 							if(i == md.getColumnCount()-1) {
 								System.out.print("\n");
@@ -73,7 +74,12 @@ public class GenericSQL {
 				} catch(Exception e) {
 					e.printStackTrace();
 				}
-				rs.close();
+
+				try {
+					rs.close();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		catch(SQLException e) {

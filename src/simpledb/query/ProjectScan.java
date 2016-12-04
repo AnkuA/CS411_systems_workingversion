@@ -182,6 +182,7 @@ public class ProjectScan implements Scan {
    public String getString(String fldname) {
 	   // No Aggregate
 	   if(aggr == null) {
+			System.out.println("fdname: " + fldname);
 	      if (hasField(fldname))
 	          return s.getString(fldname);
 	       else
