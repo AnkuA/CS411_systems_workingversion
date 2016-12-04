@@ -31,15 +31,15 @@ public class StudentMajorNoServer {
 			// analogous to the result set
 			Scan s = p.open();
 		
-			
-//			while (s.next()) {
-//				System.out.println("Name\tMajor");
-//				//String sname = s.getString("sname"); //SimpleDB stores field names
-////				int dname = s.getVal("gradyear"); //in lower case
-////				int name = s.getInt("majorid");
-//				//System.out.println(sname + "\t" + dname);
-//				System.out.println(s.getVal("gradyear").asJavaVal() + "\t" + s.getVal("majorid").asJavaVal());
-//			}
+			System.out.println("Here");
+			while (s.next()) {
+				System.out.println("Name\tMajor");
+				//String sname = s.getString("sname"); //SimpleDB stores field names
+//				int dname = s.getVal("gradyear"); //in lower case
+//				int name = s.getInt("majorid");
+				//System.out.println(sname + "\t" + dname);
+				System.out.println(s.getVal("sname").asJavaVal());
+			}
 //			int dname = s.getInt("gradyear"); //in lower case
 //			int name = s.getInt("majorid");
 //			System.out.println(dname+" "+ name);

@@ -16,10 +16,11 @@ public class GenericSQL {
 		//}
 
 		Connection conn = null;
+		Scanner sc = new Scanner(System.in);
 		try {
 			while(true) {
 				System.out.print("> ");
-				String input = System.console().readLine();
+				String input = sc.nextLine();
 
 				if(input.length() == 0) {
 					continue;
