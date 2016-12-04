@@ -178,6 +178,16 @@ public interface SQLBasicListener extends ParseTreeListener {
 	 */
 	void exitOptional_group_by_expression(SQLBasicParser.Optional_group_by_expressionContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link SQLBasicParser#grouplist}.
+	 * @param ctx the parse tree
+	 */
+	void enterGrouplist(SQLBasicParser.GrouplistContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SQLBasicParser#grouplist}.
+	 * @param ctx the parse tree
+	 */
+	void exitGrouplist(SQLBasicParser.GrouplistContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link SQLBasicParser#optional_having_expression}.
 	 * @param ctx the parse tree
 	 */

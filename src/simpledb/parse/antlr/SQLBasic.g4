@@ -68,6 +68,7 @@ aggregation
  | K_AVG
  | K_MAX
  | K_MIN
+ | K_SUM
  ;
 
 fromexpressions
@@ -101,7 +102,12 @@ optional_where_expression
  ;
 
 optional_group_by_expression
- : K_GROUP K_BY fullname
+ : K_GROUP K_BY grouplist
+ ;
+
+grouplist
+ : fullname
+ | fullname ',' grouplist
  ;
 
 optional_having_expression
@@ -253,6 +259,7 @@ K_MAX : M A X;
 K_MIN : M I N;
 K_FIRST : F I R S T;
 K_LAST : L A S T;
+K_SUM : S U M;
 
 IDENTIFIER
  : [a-zA-Z_] [a-zA-Z_0-9]*

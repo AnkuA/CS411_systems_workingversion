@@ -220,6 +220,18 @@ public class SQLBasicBaseListener implements SQLBasicListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterGrouplist(SQLBasicParser.GrouplistContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitGrouplist(SQLBasicParser.GrouplistContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterOptional_having_expression(SQLBasicParser.Optional_having_expressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
