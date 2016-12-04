@@ -237,11 +237,13 @@ public class RecursiveDescentParser {
 			Expression e2 = parseOperand(o2);
 
 			TerminalNode comparator = (TerminalNode) exp.getChild(1);
+			String compText = comparator.getText();
+			Term.Comptype ct = Term.stringToComparator(compText);
 
-			if(!comparator.getText().equals("=")) {
+			if(ct == Term.Comptype.INVALID) {
 				System.out.println("Unsupported comparator used: " + comparator.getText());
 			}
-			return new simpledb.query.Predicate(new Term(e1, e2));
+			return new simpledb.query.Predicate(new Term(e1, compText, e2));
 		}
 	}
 

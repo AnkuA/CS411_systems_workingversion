@@ -7,7 +7,20 @@ import simpledb.record.Schema;
  * @author Edward Sciore
  *
  */
+
 public class Term {
+	//AA: added Comparator enum types declarations
+	public static enum Comptype{
+	     NOTEQUAL, GREATER, LESS, GREATEREQL, LESSEQL, EQUALS, INVALID
+	};
+	//AA: added name for enum
+   //private Comptype compare;
+	private Comptype compare;
+   /** comparators
+    * **/
+   
+   
+	   
    private Expression lhs, rhs;
    
    /**
@@ -16,9 +29,35 @@ public class Term {
     * @param lhs  the LHS expression
     * @param rhs  the RHS expression
     */
-   public Term(Expression lhs, Expression rhs) {
+   //AA: added String compstr variable that is checked for what comparator it denotes
+   public Term(Expression lhs, String compstr, Expression rhs) {
+      this.compare = Term.stringToComparator(compstr);
+
+      if(this.compare == Comptype.INVALID) {
+         this.compare = Comptype.EQUALS;
+      }
+      /**
+       * AA: previous code**/
       this.lhs = lhs;
       this.rhs = rhs;
+   }
+
+   public static Comptype stringToComparator(String compstr) {
+      switch(compstr){
+         case "!=":
+        	 return Comptype.NOTEQUAL;
+         case "=":
+        	 return Comptype.EQUALS;                  
+         case ">":
+        	 return Comptype.GREATER;
+         case "<":
+        	 return Comptype.LESS;
+         case ">=":
+        	 return Comptype.GREATEREQL;
+         case "<=":
+        	 return Comptype.LESSEQL;        	 
+      }
+      return Comptype.INVALID;
    }
    
    /**
@@ -61,6 +100,11 @@ public class Term {
     * @return either the constant or null
     */
    public Constant equatesWithConstant(String fldname) {
+	   //AA: check if case first
+	  if (compare!=Comptype.EQUALS){
+		  return null;				  
+	  }
+	  //AA: upto here
       if (lhs.isFieldName() &&
           lhs.asFieldName().equals(fldname) &&
           rhs.isConstant())
@@ -82,6 +126,11 @@ public class Term {
     * @return either the name of the other field, or null
     */
    public String equatesWithField(String fldname) {
+	   //AA: check if case first
+	  if (compare!=Comptype.EQUALS){
+		  return null;				  
+	  }
+	  //AA: upto here
       if (lhs.isFieldName() &&
           lhs.asFieldName().equals(fldname) &&
           rhs.isFieldName())
@@ -114,10 +163,42 @@ public class Term {
    public boolean isSatisfied(Scan s) {
       Constant lhsval = lhs.evaluate(s);
       Constant rhsval = rhs.evaluate(s);
-      return rhsval.equals(lhsval);
+      switch(compare){
+         case EQUALS:
+            return rhsval.equals(lhsval);
+         case NOTEQUAL:
+        	 return !rhsval.equals(lhsval);
+	     case GREATER:
+		    return lhsval.compareTo(rhsval)==1;
+	     case LESS:
+	    	 return lhsval.compareTo(rhsval)==-1;
+	     case GREATEREQL:
+	    	 return lhsval.compareTo(rhsval)>=0;
+	     case LESSEQL:
+	    	 return lhsval.compareTo(rhsval)<=0;
+	     default:
+	    	 return false;
+	  }
+       
    }
    
    public String toString() {
-      return lhs.toString() + "=" + rhs.toString();
+	   //AA: check if case first and assign accordingly
+	  switch(compare){
+	     case EQUALS:
+		    return lhs.toString() + "=" + rhs.toString();
+	     case NOTEQUAL:
+			return lhs.toString() + "!=" + rhs.toString();
+	     case GREATER:
+			return lhs.toString() + ">" + rhs.toString();
+	     case LESS:
+			return lhs.toString() + "<" + rhs.toString();
+	     case GREATEREQL:
+			return lhs.toString() + ">=" + rhs.toString();
+	     case LESSEQL:
+		    return lhs.toString() + "<=" + rhs.toString();
+	     default:
+	    	return lhs.toString() + "=" + rhs.toString();
+	  }
    }
 }
