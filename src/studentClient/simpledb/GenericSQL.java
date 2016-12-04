@@ -52,22 +52,26 @@ public class GenericSQL {
 				}
 
 				// Step 3: loop through the result set
-				while (rs.next()) {
-					for(int i=0; i<md.getColumnCount(); i++) {
-						String item = "";
-						if(types.get(i) == INTEGER) {
-							item = String.valueOf(rs.getInt(fields.get(i)));
-						} else {
-							item = rs.getString(fields.get(i));
-						}
-						System.out.print(item);
+				try {
+					do {
+						for(int i=0; i<md.getColumnCount(); i++) {
+							String item = "";
+							if(types.get(i) == INTEGER) {
+								item = String.valueOf(rs.getInt(fields.get(i)));
+							} else {
+								item = rs.getString(fields.get(i));
+							}
+							System.out.print(item);
 
-						if(i == md.getColumnCount()-1) {
-							System.out.print("\n");
-						} else {
-							System.out.print("\t");
+							if(i == md.getColumnCount()-1) {
+								System.out.print("\n");
+							} else {
+								System.out.print("\t");
+							}
 						}
-					}
+					} while (rs.next());
+				} catch(Exception e) {
+					e.printStackTrace();
 				}
 				rs.close();
 			}

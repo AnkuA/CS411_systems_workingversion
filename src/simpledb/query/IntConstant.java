@@ -40,4 +40,15 @@ public class IntConstant implements Constant {
    public String toString() {
       return val.toString();
    }
+   
+   public Object addition(Object obj) {
+	  IntConstant oc = (IntConstant)obj;
+	  return new IntConstant(val + oc.val);
+   }
+
+
+	public Object division(Object obj) {
+		Integer oint = (Integer)obj;
+		return new IntConstant(val / oint);
+	}
 }

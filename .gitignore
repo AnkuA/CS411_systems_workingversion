@@ -1,3 +1,4 @@
+bin/
 *.class
 
 # Mobile Tools for Java (J2ME)
@@ -11,3 +12,7 @@
 hs_err_pid*
 
 .DS_Store
+
+#other stuff
+.html
+.prefs

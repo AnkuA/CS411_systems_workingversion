@@ -47,6 +47,9 @@ public class Predicate {
 //         if (!t.isSatisfied(s))
 //         return false;
 //      return true;
+	  if(terms.size() ==0){
+		  return true;
+	  }
       if (isconj == true){
 		  for (Term t : terms){
 			  //System.out.println(t.toString());
@@ -118,7 +121,9 @@ public class Predicate {
       else
          return result;
    }
-   
+   public int getSize(){
+	   return terms.size();
+   }
    /**
     * Determines if there is a term of the form "F=c"
     * where F is the specified field and c is some constant.

@@ -130,4 +130,8 @@ public class TableScan implements UpdateScan {
    public void moveToRid(RID rid) {
       rf.moveToRid(rid);
    }
+   
+   public RecordFile getRecordFile() {
+	   return rf;
+   }
 }

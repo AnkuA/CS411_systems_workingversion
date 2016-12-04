@@ -17,13 +17,13 @@ public class StudentMajorNoServer {
 	public static void main(String[] args) {
 		try {
 			// analogous to the driver
-			SimpleDB.init("studentdb");
+			SimpleDB.init("MP7");
 			
 			// analogous to the connection
 			Transaction tx = new Transaction();
 			
 			// analogous to the statement
-			String qry = "select * from STUDENT where majorid = 10 or majorid = 20";
+			String qry = "select count(*) from STUDENT";//where majorid = 10 or majorid = 20
 //		        + "from DEPT, STUDENT "
 //		        + "where MajorId = DId";	
 			Plan p = SimpleDB.planner().createQueryPlan(qry, tx);
@@ -31,12 +31,25 @@ public class StudentMajorNoServer {
 			// analogous to the result set
 			Scan s = p.open();
 			
-			System.out.println("Name\tMajor");
-			while (s.next()) {
-				String sname = s.getString("sname"); //SimpleDB stores field names
-				int dname = s.getInt("majorid"); //in lower case
-				System.out.println(sname + "\t" + dname);
-			}
+			s.beforeFirst();
+			
+			s.next();
+//			while (s.next()) {
+//				System.out.println("Name\tMajor");
+//				//String sname = s.getString("sname"); //SimpleDB stores field names
+////				int dname = s.getVal("gradyear"); //in lower case
+////				int name = s.getInt("majorid");
+//				//System.out.println(sname + "\t" + dname);
+//				System.out.println(s.getVal("gradyear").asJavaVal() + "\t" + s.getVal("majorid").asJavaVal());
+//			}
+			System.out.println(s.getVal("sum(gradyear)").asJavaVal());
+			System.out.println(s.getVal("min(gradyear)").asJavaVal());
+			s.next();
+			System.out.println(s.getVal("sum(gradyear)").asJavaVal());
+			System.out.println(s.getVal("min(gradyear)").asJavaVal());
+//			int dname = s.getInt("gradyear"); //in lower case
+//			int name = s.getInt("majorid");
+//			System.out.println(dname+" "+ name);
 			s.close();
 			tx.commit();
 		}

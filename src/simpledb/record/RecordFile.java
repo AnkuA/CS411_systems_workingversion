@@ -183,4 +183,8 @@ public class RecordFile {
       RecordFormatter fmtr = new RecordFormatter(ti);
       tx.append(filename, fmtr);
    }
+
+	public Schema getSchema() {
+		return ti.getSchema();
+	}
 }

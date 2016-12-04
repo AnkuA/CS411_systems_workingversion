@@ -218,7 +218,6 @@ public class Lexer {
 //      return s;
       String s;
       if(tok.sval.equals('*')){
-    	  System.out.println("Yes");
     	  s = "*";
       }else{
     	  s = tok.sval;
@@ -239,6 +238,6 @@ public class Lexer {
    private void initKeywords() {
       keywords = Arrays.asList("select", "from", "where", "and","or",
                                "insert", "into", "values", "delete", "update", "set", 
-                               "create", "table", "int", "varchar", "view", "as", "index", "on");
+                               "create", "table", "int", "varchar", "view", "as", "index", "on", "groupby");
    }
 }

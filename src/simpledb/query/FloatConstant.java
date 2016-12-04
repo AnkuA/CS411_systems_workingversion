@@ -40,4 +40,15 @@ public class FloatConstant implements Constant {
    public String toString() {
       return val.toString();
    }
+
+
+   public Object addition(Object obj) {
+	  FloatConstant oc = (FloatConstant)obj;
+	  return new FloatConstant(val + oc.val);
+   }
+
+	public Object division(Object obj) {
+		Integer oint = (Integer)obj;
+		return new FloatConstant(val / oint);
+	}
 }

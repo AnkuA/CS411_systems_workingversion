@@ -86,6 +86,10 @@ public class TableInfo {
       return recordlen;
    }
    
+   public Schema getSchema() {
+	   return schema;
+   }
+   
    private int lengthInBytes(String fldname) {
       int fldtype = schema.type(fldname);
       if (fldtype == INTEGER)

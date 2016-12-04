@@ -1,5 +1,10 @@
 package simpledb.query;
 
+import java.util.ArrayList;
+
+import simpledb.record.RID;
+import simpledb.record.RecordFile;
+
 /**
  * The scan class corresponding to the <i>product</i> relational
  * algebra operator.
@@ -7,7 +12,8 @@ package simpledb.query;
  */
 public class ProductScan implements Scan {
    private Scan s1, s2;
-   
+   private Scan check;
+
    /**
     * Creates a product scan having the two underlying scans.
     * @param s1 the LHS scan
@@ -18,10 +24,10 @@ public class ProductScan implements Scan {
       this.s2 = s2;
       s1.next();
    }
-   
+
    /**
     * Positions the scan before its first record.
-    * In other words, the LHS scan is positioned at 
+    * In other words, the LHS scan is positioned at
     * its first record, and the RHS scan
     * is positioned before its first record.
     * @see simpledb.query.Scan#beforeFirst()
@@ -29,9 +35,10 @@ public class ProductScan implements Scan {
    public void beforeFirst() {
       s1.beforeFirst();
       s1.next();
+      check = s1;
       s2.beforeFirst();
    }
-   
+
    /**
     * Moves the scan to the next record.
     * The method moves to the next RHS record, if possible.
@@ -41,14 +48,16 @@ public class ProductScan implements Scan {
     * @see simpledb.query.Scan#next()
     */
    public boolean next() {
-      if (s2.next())
+      if (s2.next()){
+         check = s2;
          return true;
-      else {
+      }else {
          s2.beforeFirst();
+         check = s1;
          return s2.next() && s1.next();
       }
    }
-   
+
    /**
     * Closes both underlying scans.
     * @see simpledb.query.Scan#close()
@@ -57,8 +66,8 @@ public class ProductScan implements Scan {
       s1.close();
       s2.close();
    }
-   
-   /** 
+
+   /**
     * Returns the value of the specified field.
     * The value is obtained from whichever scan
     * contains the field.
@@ -70,8 +79,8 @@ public class ProductScan implements Scan {
       else
          return s2.getVal(fldname);
    }
-   
-   /** 
+
+   /**
     * Returns the integer value of the specified field.
     * The value is obtained from whichever scan
     * contains the field.
@@ -83,8 +92,20 @@ public class ProductScan implements Scan {
       else
          return s2.getInt(fldname);
    }
-   
-   /** 
+   public ArrayList<RID> getRid() {
+          ArrayList<RID> result = new ArrayList<RID>();
+          result.add(((TableScan)s1).getRid());
+          result.add(((TableScan)s2).getRid());
+          return result;
+       }
+
+   public ArrayList<RecordFile> getRecordFile() {
+       ArrayList<RecordFile> result = new ArrayList<RecordFile>();
+       result.add(((TableScan)s1).getRecordFile());
+       result.add(((TableScan)s2).getRecordFile());
+       return result;
+   }
+   /**
     * Returns the string value of the specified field.
     * The value is obtained from whichever scan
     * contains the field.
@@ -96,7 +117,7 @@ public class ProductScan implements Scan {
       else
          return s2.getString(fldname);
    }
-   
+
    /**
     * Returns true if the specified field is in
     * either of the underlying scans.
