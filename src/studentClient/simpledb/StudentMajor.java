@@ -14,8 +14,8 @@ public class StudentMajor {
 			// Step 2: execute the query
 			Statement stmt = conn.createStatement();
 			String qry = "select sname, dname "
-			           + "from DEPT, STUDENT where majorid = did;";
-//			           + "where MajorId = DId";
+			           + "from DEPT, STUDENT "
+			           + "where majorid = did;";
 			ResultSet rs = stmt.executeQuery(qry);
 
 			// Step 3: loop through the result set

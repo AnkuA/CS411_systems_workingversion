@@ -81,11 +81,9 @@ public class ProjectScan implements Scan {
 	  }
 	  // Have Aggregate
 	  else {
-		  System.out.println("hererrr");
 		  GroupByScan gbs = (GroupByScan)s;
 		  // Have Group By
 		  if(gbs.hasGroup()) {
-			  System.out.println("here");
 			  if(curll< kl.size() - 1){
 				  //this.thold = kl.get(curll);
 				  curll+=1;
