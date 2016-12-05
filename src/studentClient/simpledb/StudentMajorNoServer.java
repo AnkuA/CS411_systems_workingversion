@@ -23,17 +23,17 @@ public class StudentMajorNoServer {
 			Transaction tx = new Transaction();
 			
 			// analogous to the statement
-			String qry = "select count(*) from DEPT group by did;";//where majorid = 10 or majorid = 20
+			String qry = "select count(*) from STUDENT where majorid = 10 or majorid = 20;";//where majorid = 10 or majorid = 20
 //		        + "from DEPT, STUDENT "
 //		        + "where MajorId = DId";	
 			Plan p = SimpleDB.planner().createQueryPlan(qry, tx);
 			
 			// analogous to the result set
 			Scan s = p.open();
-		
-			System.out.println("Here");
+			
+			
 			s.next();
-			System.out.println(s.getVal("count(*)").asJavaVal());
+//			System.out.println(s.getVal("count(*)").asJavaVal());
 			
 //			while (s.next()) {
 //				System.out.println("Name\tMajor");

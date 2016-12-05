@@ -1,6 +1,8 @@
 package simpledb.query;
 
 import simpledb.record.Schema;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -21,8 +23,12 @@ public class ProjectPlan implements Plan {
     */
    public ProjectPlan(Plan p, Collection<String> fieldlist, HashMap<String, Aggregate> aggr) {
       this.p = p;
-      for (String fldname : fieldlist)
-         schema.add(fldname, p.schema());
+      for (String fldname : fieldlist) {
+          schema.add(fldname, p.schema());
+      }
+      for(String field : aggr.keySet()) {
+    	  System.out.println(field);
+      }
       this.aggr = aggr;
    }
    
@@ -70,5 +76,15 @@ public class ProjectPlan implements Plan {
     */
    public Schema schema() {
       return schema;
+   }
+   
+   public Collection<String> fields() {
+	   ArrayList<String> fields = new ArrayList<String>(schema.fields());
+	   if(aggr != null) {
+		   fields.addAll(aggr.keySet());
+		   return fields;
+	   }
+	   else
+		   return fields;
    }
 }
