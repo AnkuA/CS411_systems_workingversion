@@ -72,7 +72,7 @@ public class RecursiveDescentParser {
 		TokenStream ts = new CommonTokenStream(lex);
 		SQLBasicParser p = new SQLBasicParser(ts);
 		ParseTree tree = p.parse();
-			printParseTree(tree, 0);
+//		printParseTree(tree, 0);
 		return processQueryTree(tree);
 	}
 
@@ -111,7 +111,7 @@ public class RecursiveDescentParser {
 
 		System.out.println("Select expressions: " + selectCtx.getChild(childIndex).getText());
 		HashMap<String, Aggregate> collector = new HashMap<String, Aggregate>();
-		Collection<String> groups = null;
+		Collection<String> groups = new ArrayList<String>();
 		Collection<String> fields = parseSelectExpressions((SQLBasicParser.SelectexpressionsContext) selectCtx.getChild(childIndex), collector);
 		childIndex += 2;
 		System.out.println("From expressions: " + selectCtx.getChild(childIndex).getText());
@@ -165,6 +165,12 @@ public class RecursiveDescentParser {
 			if(!groups.containsAll(fields)) {
 				throw new RuntimeException("Invalid fields due to aggregation");
 			}
+		} else {
+			collector = null;
+		}
+
+		if(groups.size() == 0) {
+			groups = null;
 		}
 		return new QueryData(fields, tables, pred, groups, collector);
 	}
@@ -177,15 +183,15 @@ public class RecursiveDescentParser {
 			//System.out.println("Aggregation specified, but not supported.");
 			//fields.add(parseSimpleSelectExpression((SQLBasicParser.SimpleselectexpressionContext) node.getChild(2)));
 			String aggregation = node.getChild(0).getText();
-			String field = node.getChild(2).getText();
+			String field = node.getChild(2).getText().toLowerCase();
 
-			if(aggregation.equals("max")) {
+			if(aggregation.equalsIgnoreCase("max")) {
 				collector.put("max(" + field + ")", new Max(field));
-			} else if(aggregation.equals("min")) {
+			} else if(aggregation.equalsIgnoreCase("min")) {
 				collector.put("min(" + field + ")", new Min(field));
-			} else if(aggregation.equals("avg")) {
+			} else if(aggregation.equalsIgnoreCase("avg")) {
 				collector.put("avg(" + field + ")", new Average(field));
-			} else if(aggregation.equals("sum")) {
+			} else if(aggregation.equalsIgnoreCase("sum")) {
 				collector.put("sum(" + field + ")", new Sum(field));
 			} else {
 				collector.put("count(" + field + ")", new Count(field));
@@ -212,7 +218,7 @@ public class RecursiveDescentParser {
 			if(node.getChildCount() > 1) {
 				System.out.println("As Alias expression used, but not supported: " + node.getChild(1).getText());
 			}
-			tables.add(node.getChild(0).getChild(0).getText());
+			tables.add(node.getChild(0).getChild(0).getText().toLowerCase());
 		}
 
 		if(root.getChildCount() > 2) {
@@ -306,9 +312,9 @@ public class RecursiveDescentParser {
 	public static String parseSimpleSelectExpression(SQLBasicParser.SimpleselectexpressionContext ctx) {
 		if(ctx.getChildCount() > 1 && ctx.getChild(1) instanceof SQLBasicParser.As_alias_expressionContext) {
 			System.out.println("As alias expression used, but not supported");
-			return ctx.getChild(0).getText();
+			return ctx.getChild(0).getText().toLowerCase();
 		}
-		return ctx.getText();
+		return ctx.getText().toLowerCase();
 	}
 
 	public static Collection<String> parseGroupByExpression(SQLBasicParser.Optional_group_by_expressionContext root) {
@@ -320,7 +326,7 @@ public class RecursiveDescentParser {
 	public static Collection<String> parseGroups(SQLBasicParser.GrouplistContext node) {
 		Collection<String> groups = new ArrayList<String>();
 
-		groups.add(node.getChild(0).getText());
+		groups.add(node.getChild(0).getText().toLowerCase());
 
 		if(node.getChildCount() > 2) {
 			groups.addAll(parseGroups((SQLBasicParser.GrouplistContext) node.getChild(2)));

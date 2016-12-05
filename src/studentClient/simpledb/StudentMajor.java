@@ -13,17 +13,17 @@ public class StudentMajor {
 
 			// Step 2: execute the query
 			Statement stmt = conn.createStatement();
-			String qry = "select sname "
-			           + "from STUDENT;";
+			String qry = "select sname, dname "
+			           + "from DEPT, STUDENT where majorid = did;";
 //			           + "where MajorId = DId";
 			ResultSet rs = stmt.executeQuery(qry);
 
 			// Step 3: loop through the result set
 			System.out.println("Name\tMajor");
 			while (rs.next()) {
-				String sname = rs.getString("SName");
-//				String dname = rs.getString("DName");
-				System.out.println(sname);
+				String sname = rs.getString("sname");
+				String dname = rs.getString("dname");
+				System.out.println(sname + "\t" +dname);
 			}
 			rs.close();
 		}
