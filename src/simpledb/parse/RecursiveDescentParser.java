@@ -76,6 +76,15 @@ public class RecursiveDescentParser {
 		return processQueryTree(tree);
 	}
 
+	public static void explain(String query) {
+		CharStream input = new ANTLRInputStream(query);
+		SQLBasicLexer lex = new SQLBasicLexer(input);
+		TokenStream ts = new CommonTokenStream(lex);
+		SQLBasicParser p = new SQLBasicParser(ts);
+		ParseTree tree = p.parse();
+		printParseTree(tree, 0);
+	}
+
 	public static QueryData processQueryTree(ParseTree root) {
 		SQLBasicParser.SelectContext selectCtx = (SQLBasicParser.SelectContext) root.getChild(0);
 
@@ -242,7 +251,7 @@ public class RecursiveDescentParser {
 			simpledb.query.Predicate pred2 = parseExpression((SQLBasicParser.ExpressionContext) exp.getChild(2));
 			//pred.setIsconj(false);
 			//pred.conjoinWith(pred2);
-			pred = new JoinedPredicate(pred, pred2, false);
+			pred = new JoinedPredicate(pred, pred2, false, false);
 		}
 		return pred;
 	}
@@ -255,7 +264,7 @@ public class RecursiveDescentParser {
 			simpledb.query.Predicate pred2 = parseAndCondition((SQLBasicParser.AndconditionContext) exp.getChild(2));
 			//pred.setIsconj(true);
 			//pred.conjoinWith(pred2);
-			pred = new JoinedPredicate(pred, pred2, true);
+			pred = new JoinedPredicate(pred, pred2, true, false);
 		}
 		return pred;
 	}
@@ -265,9 +274,10 @@ public class RecursiveDescentParser {
 			TerminalNode node = (TerminalNode) exp.getChild(0);
 
 			if(node.getSymbol().getType() == SQLBasicParser.K_NOT) {
-				System.out.println("NOT operand used, but not supported");
-
-				return parseCondition((SQLBasicParser.ConditionContext) exp.getChild(1));
+				//System.out.println("NOT operand used, but not supported");
+				simpledb.query.Predicate result = parseCondition((SQLBasicParser.ConditionContext) exp.getChild(1));
+				result.setIsinv(true);
+				return result;
 			} else {
 				//expression in parenthesis
 				return parseExpression((SQLBasicParser.ExpressionContext) exp.getChild(1));
@@ -305,7 +315,7 @@ public class RecursiveDescentParser {
 			}
 		} else {
 			//name
-			return new FieldNameExpression(node.getText());
+			return new FieldNameExpression(node.getText().toLowerCase());
 		}
 	}
 

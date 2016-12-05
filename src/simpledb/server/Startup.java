@@ -6,8 +6,8 @@ import java.rmi.registry.*;
 public class Startup {
    public static void main(String args[]) throws Exception {
       // configure and initialize the database
-//      SimpleDB.init(args[0]);
-	   SimpleDB.init("MP7");
+      SimpleDB.init(args[0]);
+//	   SimpleDB.init("MP7");
       
       // create a registry specific for the server on the default port
     

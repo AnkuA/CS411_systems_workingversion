@@ -10,6 +10,7 @@ import java.util.*;
 public class Predicate {
    private List<Term> terms = new ArrayList<Term>();
    private boolean isconj= false;
+   private boolean isinv = false;
    /**
     * Creates an empty predicate, corresponding to "true".
     */
@@ -27,6 +28,9 @@ public class Predicate {
    public void setIsconj(boolean inconj){
 	   isconj = inconj;
    }
+   public void setIsinv(boolean inv){
+       isinv = inv;
+   }
    /**
     * Modifies the predicate to be the conjunction of
     * itself and the specified predicate.
@@ -42,7 +46,15 @@ public class Predicate {
     * @param s the scan
     * @return true if the predicate is true in the scan
     */
-   public boolean isSatisfied(Scan s) {
+	public boolean isSatisfied(Scan s) {
+		boolean result = isSatisfiedNoInv(s);
+
+		if(isinv) {
+			return !result;
+		}
+		return result;
+	}
+   private boolean isSatisfiedNoInv(Scan s) {
 //      for (Term t : terms)
 //         if (!t.isSatisfied(s))
 //         return false;
