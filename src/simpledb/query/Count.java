@@ -13,7 +13,14 @@ public class Count implements Aggregate {
 	}
 
 	public void addValue(ArrayList<Constant> groupValue, Scan currentScan) {
-		Constant new_val = currentScan.getVal(field);
+		Object new_val = null;
+		if(field.equals("*")) {
+			new_val = "*";
+		}
+		else {
+			new_val = currentScan.getVal(field);
+		}
+		
 		if(data.containsKey(groupValue)) {
 			Integer old_val = data.get(groupValue);
 			if(new_val != null)

@@ -23,7 +23,7 @@ public class StudentMajorNoServer {
 			Transaction tx = new Transaction();
 			
 			// analogous to the statement
-			String qry = "select sname from STUDENT;";//where majorid = 10 or majorid = 20
+			String qry = "select count(*) from DEPT group by did;";//where majorid = 10 or majorid = 20
 //		        + "from DEPT, STUDENT "
 //		        + "where MajorId = DId";	
 			Plan p = SimpleDB.planner().createQueryPlan(qry, tx);
@@ -32,14 +32,17 @@ public class StudentMajorNoServer {
 			Scan s = p.open();
 		
 			System.out.println("Here");
-			while (s.next()) {
-				System.out.println("Name\tMajor");
-				//String sname = s.getString("sname"); //SimpleDB stores field names
-//				int dname = s.getVal("gradyear"); //in lower case
-//				int name = s.getInt("majorid");
-				//System.out.println(sname + "\t" + dname);
-				System.out.println(s.getVal("sname").asJavaVal());
-			}
+			s.next();
+			System.out.println(s.getVal("count(*)").asJavaVal());
+			
+//			while (s.next()) {
+//				System.out.println("Name\tMajor");
+//				//String sname = s.getString("sname"); //SimpleDB stores field names
+////				int dname = s.getVal("gradyear"); //in lower case
+////				int name = s.getInt("majorid");
+//				//System.out.println(sname + "\t" + dname);
+//				System.out.println(s.getVal("sname").asJavaVal());
+//			}
 //			int dname = s.getInt("gradyear"); //in lower case
 //			int name = s.getInt("majorid");
 //			System.out.println(dname+" "+ name);

@@ -13,9 +13,9 @@ public class StudentMajor {
 
 			// Step 2: execute the query
 			Statement stmt = conn.createStatement();
-			String qry = "select sname, dname "
-			           + "from DEPT, STUDENT "
-			           + "where majorid = did;";
+			String qry = "SELECT SNAME, DNAME, majorid "
+			           + "FROM DEPT, STUDENT "
+			           + "WHERE MAJORID = DID and majorid <= 20;";
 			ResultSet rs = stmt.executeQuery(qry);
 
 			// Step 3: loop through the result set
@@ -23,7 +23,8 @@ public class StudentMajor {
 			while (rs.next()) {
 				String sname = rs.getString("sname");
 				String dname = rs.getString("dname");
-				System.out.println(sname + "\t" +dname);
+				int majorid = rs.getInt("majorid");
+				System.out.println(sname + "\t" +dname + "\t" + majorid);
 			}
 			rs.close();
 		}

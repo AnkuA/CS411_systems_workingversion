@@ -11,7 +11,8 @@ public class JoinedPredicate extends Predicate {
 	//private List<Term> terms = new ArrayList<Term>();
 	private Predicate pred1;
 	private Predicate pred2;
-	private boolean isconj= false;
+	private boolean isconj = false;
+	private boolean isinv = false;
 	/**
 	 * Creates an empty predicate, corresponding to "true".
 	 */
@@ -20,10 +21,11 @@ public class JoinedPredicate extends Predicate {
 		this.pred2 = null;
 	}
 
-	public JoinedPredicate(Predicate p1, Predicate p2, boolean andOp) {
+	public JoinedPredicate(Predicate p1, Predicate p2, boolean andOp, boolean notOp) {
 		this.pred1 = p1;
 		this.pred2 = p2;
 		this.isconj = andOp;
+		this.isinv = notOp;
 	}
 	/**
 	 * Creates a predicate containing a single term.
@@ -32,16 +34,21 @@ public class JoinedPredicate extends Predicate {
 	public void setIsconj(boolean inconj){
 		isconj = inconj;
 	}
+	public void setIsinv(boolean inv){
+		isinv = inv;
+	}
 	/**
 	 * Modifies the predicate to be the conjunction of
 	 * itself and the specified predicate.
 	 * @param pred the other predicate
 	 */
 	public void conjoinWith(Predicate pred) {
+		System.out.println("ConjoinWith called - undefined behaviour");
+
 		if(this.pred2 == null) {
 			this.pred2 = pred;
 		} else {
-			this.pred2 = new JoinedPredicate(this.pred2, pred, this.isconj);
+			this.pred2 = new JoinedPredicate(this.pred2, pred, this.isconj, this.isinv);
 		}
 	}
 	
@@ -52,17 +59,25 @@ public class JoinedPredicate extends Predicate {
 	 * @return true if the predicate is true in the scan
 	 */
 	public boolean isSatisfied(Scan s) {
+		boolean result;
 		if(pred1.isSatisfied(s)) {
 			if(isconj) {
-				return pred2.isSatisfied(s);
+				result = pred2.isSatisfied(s);
+			} else {
+				result = true;
 			}
-			return true;
+		} else {
+			if(isconj) {
+				result =  false;
+			} else {
+				result = pred2.isSatisfied(s);
+			}
 		}
 
-		if(isconj) {
-			return false;
+		if(isinv) {
+			return !result;
 		}
-		return pred2.isSatisfied(s);
+		return result;
 	}/*
 
 
@@ -111,7 +126,7 @@ public class JoinedPredicate extends Predicate {
 	public Predicate selectPred(Schema sch) {
 		Predicate subp1 = pred1.selectPred(sch);
 		Predicate subp2 = pred2.selectPred(sch);
-		return new JoinedPredicate(subp1, subp2, isconj);
+		return new JoinedPredicate(subp1, subp2, isconj, isinv);
 		//Predicate result = new Predicate();
 		//for (Term t : terms)
 		//	if (t.appliesTo(sch))
@@ -133,7 +148,7 @@ public class JoinedPredicate extends Predicate {
 	public Predicate joinPred(Schema sch1, Schema sch2) {
 		Predicate subp1 = pred1.joinPred(sch1, sch2);
 		Predicate subp2 = pred2.joinPred(sch1, sch2);
-		return new JoinedPredicate(subp1, subp2, isconj);
+		return new JoinedPredicate(subp1, subp2, isconj, isinv);
 		//Predicate result = new Predicate();
 		//Schema newsch = new Schema();
 		//newsch.addAll(sch1);
@@ -199,7 +214,7 @@ public class JoinedPredicate extends Predicate {
 		String result1 = pred1.toString();
 		String result2 = pred2.toString();
 		String joiner = isconj? ") and (":") or (";
-		return "(" + result1 + joiner + result2 + ")";
+		return (isinv?"not " : "") + "(" + result1 + joiner + result2 + ")";
 		//Iterator<Term> iter = terms.iterator();
 		//if (!iter.hasNext()) 
 		//	return "";

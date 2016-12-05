@@ -45,8 +45,13 @@ public class GenericSQL {
 					String field = md.getColumnName(i+1);
 					fields.add(field);
 					types.add(md.getColumnType(i+1));
-					System.out.print(field);
-	
+
+					if(field.length() > 7) {
+						System.out.print(field.substring(0, 7));
+					} else {
+						System.out.print(field);
+					}
+
 					if(i == md.getColumnCount()-1) {
 						System.out.print("\n");
 					} else {
@@ -56,7 +61,7 @@ public class GenericSQL {
 
 				// Step 3: loop through the result set
 				try {
-					do {
+					while (rs.next()) {
 						for(int i=0; i<md.getColumnCount(); i++) {
 							String item = "";
 							if(types.get(i) == INTEGER) {
@@ -64,7 +69,13 @@ public class GenericSQL {
 							} else {
 								item = rs.getString(fields.get(i));
 							}
-							System.out.print(item);
+							//System.out.print(item.substring(0, 7));
+
+							if(item.length() > 7) {
+								System.out.print(item.substring(0, 7));
+							} else {
+								System.out.print(item);
+							}
 							//System.out.print(rs.getVal(fields.get(i)).asJavaVal());
 
 							if(i == md.getColumnCount()-1) {
@@ -73,7 +84,7 @@ public class GenericSQL {
 								System.out.print("\t");
 							}
 						}
-					} while (rs.next());
+					}
 				} catch(Exception e) {
 					e.printStackTrace();
 				}

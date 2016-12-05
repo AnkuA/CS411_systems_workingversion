@@ -15,6 +15,8 @@ public class Max implements Aggregate {
 
 	public void addValue(ArrayList<Constant> groupValue, Scan currentScan) {
 		Constant new_val = currentScan.getVal(field);
+		if(new_val.getClass().getName() == "simpledb.query.StringConstant")
+			throw new IllegalAggregationException("String Inside Max");
 		if(data.containsKey(groupValue)) {
 			Constant old_val = data.get(groupValue);
 			if(old_val.compareTo(new_val) < 0)

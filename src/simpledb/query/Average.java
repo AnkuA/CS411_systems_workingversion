@@ -17,6 +17,8 @@ public class Average implements Aggregate {
 	@Override
 	public void addValue(ArrayList<Constant> groupValue, Scan currentScan) {
 		Constant new_val = currentScan.getVal(field);
+		if(new_val.getClass().getName() == "simpledb.query.StringConstant")
+			throw new IllegalAggregationException("String Inside Average");
 		if(data.containsKey(groupValue)) {
 			Constant old_val = data.get(groupValue);
 			Integer old_count = count.get(groupValue);
